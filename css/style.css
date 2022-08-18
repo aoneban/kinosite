@@ -51,7 +51,7 @@ body {
     position: relative;
     height: 360px;
     box-shadow: 7px 3px 50px grey;
-    border: 3px solid #999;
+    border: 1px solid #999;
 }
 
 .movie__cover {
@@ -105,6 +105,12 @@ body {
     background: #1a191f;
     color: #fff;
     font-size: 14px;
+
+}
+
+.iframe {
+    display: block;
+    margin: 20px auto;
 
 }
 
@@ -184,12 +190,13 @@ footer {
     color: #fff;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .modal__movie-backdrop {
     width: 50%;
     margin-bottom: 10px;
-    margin-left: 140px;
+    margin-top: 21em;
 }
 
 .modal__movie-info {

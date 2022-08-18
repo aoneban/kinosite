@@ -1,4 +1,5 @@
-const API_KEY = "750447c2-3f08-4a4a-b7ea-2dc529472642";
+const API_KEY = "8fb3f1d4-57ae-40d8-a0e9-7e563721a82c"
+//const API_KEY = "750447c2-3f08-4a4a-b7ea-2dc529472642";
 const API_URL_POPULAR =
   "https://kinopoiskapiunofficial.tech/api/v2.2/films/top?type=TOP_100_POPULAR_FILMS&page=";
 
@@ -6,6 +7,8 @@ const API_FILM_SEARCH =
   "https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=";
 
 const API_FILM_MODAL = "https://kinopoiskapiunofficial.tech/api/v2.2/films/";
+
+const API_FILM_VIDEO = "https://kinopoiskapiunofficial.tech/api/v2.2/films/"
 
 getMovies(API_URL_POPULAR);
 
@@ -78,6 +81,7 @@ function showMovies(data) {
         </div>
     `;
     movieEl.addEventListener("click", () => openModal(movie.filmId));
+       
     moviesEl.appendChild(movieEl);
   });
 }
@@ -127,10 +131,19 @@ async function openModal(id) {
     },
   });
   const respData = await resp.json();
+  
+  const respon = await fetch(API_FILM_VIDEO + id + '/videos', {
+    headers: {
+      "X-API-KEY": API_KEY,
+      "Content-Type": "application/json",
+    },
+  });
+  const responData = await respon.json();
 
   modalEl.classList.add("modal--show");
   document.body.classList.add("stop-scrolling");
-
+  const myUrl = megaFunc(responData)
+  console.log(myUrl)
   modalEl.innerHTML = `
       <div class="modal__card">
         <img class="modal__movie-backdrop" src="${respData.posterUrlPreview}" alt="">
@@ -145,6 +158,7 @@ async function openModal(id) {
           <li >Сайт: <a class="modal__movie-site" href="${respData.webUrl}">${respData.webUrl}</a></li>
           <li class="modal__movie-description">${respData.description}</li>
         </ul>
+        ${myUrl !== undefined ?`<iframe class="iframe" width="300" height="240" src="${myUrl}" frameborder="0" allowfullscreen>Трейлер</iframe>` : ''}
         <button onclick="closeModal()" type="button" class="modal__button-close">Закрыть</button>
       </div>
 `;
@@ -166,3 +180,21 @@ window.addEventListener("keydown", (e) => {
     closeModal();
   }
 });
+
+function megaFunc(obj) {
+  const link = [];
+  obj.items.map((el) => {
+    if (el.url.includes("https://www.youtube.com/watch?v=") && !el.url.includes("&feature=youtu.be")) {
+      link.push(el.url.replace("watch?v=", "embed/"));
+    } else if (el.url.includes("https://youtu.be")) {
+      link.push(el.url.replace("https://youtu.be/", "https://www.youtube.com/embed/"));
+    } else if (el.url.includes("https://www.youtube.com/v")) {
+      link.push(el.url.replace("/v/", "/embed/"));
+    } 
+  });
+  if (link[0] === undefined) {
+    return undefined;
+  } else {
+    return link[0].toString();
+  }
+}
