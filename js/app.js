@@ -1,5 +1,5 @@
-const API_KEY = "8fb3f1d4-57ae-40d8-a0e9-7e563721a82c";
-//const API_KEY = "750447c2-3f08-4a4a-b7ea-2dc529472642";
+//const API_KEY = "8fb3f1d4-57ae-40d8-a0e9-7e563721a82c";
+const API_KEY = "750447c2-3f08-4a4a-b7ea-2dc529472642";
 const API_URL_POPULAR =
   "https://kinopoiskapiunofficial.tech/api/v2.2/films/top?type=TOP_100_POPULAR_FILMS&page=";
 
@@ -9,6 +9,9 @@ const API_FILM_SEARCH =
 const API_FILM_MODAL = "https://kinopoiskapiunofficial.tech/api/v2.2/films/";
 
 const API_FILM_VIDEO = "https://kinopoiskapiunofficial.tech/api/v2.2/films/";
+
+const API_FILM_ACTORS =
+  "https://kinopoiskapiunofficial.tech/api/v1/staff?filmId=";
 
 getMovies(API_URL_POPULAR);
 
@@ -140,11 +143,19 @@ async function openModal(id) {
   });
   const responData = await respon.json();
 
+  const actors = await fetch(API_FILM_ACTORS + id, {
+    headers: {
+      "X-API-KEY": API_KEY,
+      "Content-Type": "application/json",
+    },
+  });
+  const actorsData = await actors.json();
+
   modalEl.classList.add("modal--show");
   document.body.classList.add("stop-scrolling");
   const myUrl = megaFunc(responData);
   const myUrl__2 = megaFunc_2(responData);
-  console.log(myUrl);
+
   modalEl.innerHTML = `
       <div class="modal__card">
         <img class="modal__movie-backdrop" src="${
@@ -158,6 +169,10 @@ async function openModal(id) {
             respData.ratingImdb
           } | Кинопоиск: ${respData.ratingKinopoisk}</li>
           <li class="modal__relise-year">Год выпуска: ${respData.year}</li>
+          <details>
+              <summary>Актеры:</summary>
+                  <p style="font-size:12px">${getActors(actorsData)}</p>
+          </details>
           <li class="modal__movie-genre">Жанр: ${respData.genres.map(
             (elem) => `<span> ${elem.genre}</span>`
           )}</li>
@@ -174,7 +189,7 @@ async function openModal(id) {
         ${
           myUrl !== undefined
             ? `<iframe class="iframe" width="300" height="240" src="${myUrl}" frameborder="0" allowfullscreen>Трейлер</iframe>`
-            : ` <video class="iframe" width="320" height="240" controls> <source src="${myUrl__2}" type="video/mp4"></video>`
+            : `<video class="iframe" width="320" height="240" controls> <source src="${myUrl__2}" type="video/ogg"></video>`
         }
         <button onclick="closeModal()" type="button" class="modal__button-close">Закрыть</button>
       </div>
@@ -230,6 +245,8 @@ function megaFunc_2(obj) {
       link.push(el.url);
     } else if (el.url.includes("disk.yandex")) {
       link.push(el.url);
+    } else if (el.url.includes("https://widgets.kinopoisk")) {
+      link.push(el.url);
     }
   });
   if (link[0] === undefined) {
@@ -237,4 +254,12 @@ function megaFunc_2(obj) {
   } else {
     return link[0].toString();
   }
+}
+
+function getActors(obj) {
+  let actors = "";
+  for (i = 0; i < 10; i++) {
+    actors += (obj[i].nameRu + ', ');
+  }
+  return actors.substring(0, actors.length - 2);
 }

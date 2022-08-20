@@ -230,6 +230,22 @@ ul li {
     overflow: hidden;
 }
 
+details > summary {
+    padding: 4px;
+    width: 100px;
+    background-color: #333;
+    border: none;
+    box-shadow: 1px 1px 2px #666;
+    cursor: pointer;
+  }
+  
+  details > p {
+    background-color: #333;
+    padding: 4px;
+    margin: 0;
+    box-shadow: 1px 1px 2px #666;
+  }
+
 .modal {
         -webkit-animation-name: zoom;
         -webkit-animation-duration: 0.6s;
