@@ -1,5 +1,5 @@
-//const API_KEY = "8fb3f1d4-57ae-40d8-a0e9-7e563721a82c";
-const API_KEY = "750447c2-3f08-4a4a-b7ea-2dc529472642";
+const API_KEY = "8fb3f1d4-57ae-40d8-a0e9-7e563721a82c";
+//const API_KEY = "750447c2-3f08-4a4a-b7ea-2dc529472642";
 const API_URL_POPULAR =
   "https://kinopoiskapiunofficial.tech/api/v2.2/films/top?type=TOP_100_POPULAR_FILMS&page=";
 
@@ -83,8 +83,7 @@ function showMovies(data) {
           </div>
         </div>
     `;
-    movieEl.addEventListener("click", () => openModal(movie.filmId));
-
+    
     moviesEl.appendChild(movieEl);
   });
 }
@@ -155,6 +154,8 @@ async function openModal(id) {
   document.body.classList.add("stop-scrolling");
   const myUrl = megaFunc(responData);
   const myUrl__2 = megaFunc_2(responData);
+  let x = getActorsPhotos(actorsData)
+  console.log(x[0])
 
   modalEl.innerHTML = `
       <div class="modal__card">
@@ -172,6 +173,8 @@ async function openModal(id) {
           <details>
               <summary>Актеры:</summary>
                   <p style="font-size:12px">${getActors(actorsData)}</p>
+                  <img src="${x[0]}" style="width:30px;">
+                  <img src="${x[1]}" style="width:30px;">
           </details>
           <li class="modal__movie-genre">Жанр: ${respData.genres.map(
             (elem) => `<span> ${elem.genre}</span>`
@@ -188,7 +191,7 @@ async function openModal(id) {
         </ul>
         ${
           myUrl !== undefined
-            ? `<iframe class="iframe" width="300" height="240" src="${myUrl}" frameborder="0" allowfullscreen>Трейлер</iframe>`
+            ? `<iframe class="iframe" width="300" height="240" src="${myUrl}" frameborder="0" loading="lazy" allowfullscreen>Трейлер</iframe>`
             : `<video class="iframe" width="320" height="240" controls> <source src="${myUrl__2}" type="video/ogg"></video>`
         }
         <button onclick="closeModal()" type="button" class="modal__button-close">Закрыть</button>
@@ -258,8 +261,19 @@ function megaFunc_2(obj) {
 
 function getActors(obj) {
   let actors = "";
-  for (i = 0; i < 10; i++) {
-    actors += (obj[i].nameRu + ', ');
+  for (i = 0; i < 6; i++) {
+    actors += obj[i + 1].nameRu + ", ";
   }
   return actors.substring(0, actors.length - 2);
 }
+
+function getActorsPhotos(obj) {
+  let actorsPhoto = [];
+  for (i = 0; i < 6; i++) {
+    actorsPhoto.push(obj[i + 1].posterUrl);
+  }
+  console.log(actorsPhoto)
+  return actorsPhoto;
+}
+
+
